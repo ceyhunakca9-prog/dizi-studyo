@@ -68,7 +68,7 @@ a{color:var(--vurgu)}
 <body>
 
 <div class="ust"><img src="icon-192.png" alt=""><div><h1>Dizi Stüdyo</h1></div></div>
-<p class="alt-baslik" id="altBaslik">Fikir seç, bölüm üret, A/B ile devam et.</p>
+<p class="alt-baslik" id="altBaslik">Fikir seç, bölüm üret, A/B ile devam et. <span style="opacity:.5">s.2026-11-26b</span></p>
 
 <div id="ayarUyari" class="uyari gizli">Önce <b>Ayarlar</b> sekmesinden GitHub anahtarını gir.</div>
 
@@ -435,6 +435,22 @@ $("#kaydetBtn").onclick = async () => {
     try { if ("Notification" in window && Notification.permission === "default") Notification.requestPermission(); } catch (e) {}
   } catch (e) { s.textContent = "✗ " + e.message; }
 };
+
+// ---------------------------------------------------------------- otomatik güncelleme
+const SURUM = "2026-11-26b";
+async function guncellemeKontrol() {
+  try {
+    const r = await fetch("surum.txt?_=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) return;
+    const yeni = (await r.text()).trim();
+    if (yeni && yeni !== SURUM) {
+      try { const k = await caches.keys(); await Promise.all(k.map(x => caches.delete(x))); } catch (e) {}
+      location.reload();
+    }
+  } catch (e) {}
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden) guncellemeKontrol(); });
+guncellemeKontrol();
 
 // ---------------------------------------------------------------- başlangıç
 ayarKontrol(); rozetGuncelle(); fikirAlaniCiz(); yokla();
