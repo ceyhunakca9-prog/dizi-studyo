@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111318">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Dizi Stüdyo</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#111318; --yuzey:#1a1d24; --yuzey2:#232731; --cizgi:#2e3340; --yazi:#eef0f4; --soluk:#9aa1b2;
+  --vurgu:#ffc83d; --vurgu-yazi:#1a1400; --a:#4da3ff; --b:#ff6b8a; --iyi:#3ecf8e; --kotu:#ff5c5c;
+  --r:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--yazi);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{padding:calc(env(safe-area-inset-top) + 8px) 16px calc(env(safe-area-inset-bottom) + 84px)}
+h1{font-size:22px;margin:6px 0 2px;letter-spacing:.2px}
+h2{font-size:17px;margin:22px 0 10px}
+.ust{display:flex;align-items:center;gap:10px}
+.ust img{width:34px;height:34px;border-radius:9px}
+.alt-baslik{color:var(--soluk);font-size:14px;margin:0 0 14px}
+.kart{background:var(--yuzey);border:1px solid var(--cizgi);border-radius:var(--r);padding:14px;margin:0 0 12px}
+.kart h3{margin:0 0 6px;font-size:17px}
+.etiket{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--yuzey2);color:var(--soluk);margin:0 6px 6px 0}
+.soluk{color:var(--soluk);font-size:14px}
+textarea,input,select{width:100%;background:var(--yuzey2);color:var(--yazi);border:1px solid var(--cizgi);border-radius:12px;padding:12px;font:inherit}
+textarea{min-height:96px;resize:vertical}
+label{display:block;font-size:14px;color:var(--soluk);margin:12px 0 6px}
+button{font:inherit;font-weight:600;border:0;border-radius:12px;padding:13px 16px;cursor:pointer;width:100%;margin-top:10px;background:var(--yuzey2);color:var(--yazi)}
+button.ana{background:var(--vurgu);color:var(--vurgu-yazi)}
+button.a{background:var(--a);color:#fff}
+button.b{background:var(--b);color:#fff}
+button.kucuk{width:auto;padding:8px 12px;font-size:14px;margin:8px 8px 0 0}
+button:disabled{opacity:.5}
+.ikili{display:flex;gap:10px}.ikili>*{flex:1}
+.cipler{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.cip{background:var(--yuzey2);border:1px solid var(--cizgi);border-radius:99px;padding:7px 12px;font-size:14px;color:var(--yazi);width:auto;margin:0;font-weight:500}
+.durum{display:flex;align-items:center;gap:10px;font-size:15px}
+.nokta{width:10px;height:10px;border-radius:50%;background:var(--vurgu);flex:none;animation:nabiz 1.4s infinite}
+.nokta.iyi{background:var(--iyi);animation:none}.nokta.kotu{background:var(--kotu);animation:none}
+@keyframes nabiz{50%{opacity:.3}}
+.asamalar{display:flex;gap:6px;margin:12px 0 4px}
+.asama{flex:1;height:6px;border-radius:9px;background:var(--yuzey2)}
+.asama.bitti{background:var(--iyi)}.asama.su{background:var(--vurgu)}
+.asama-ad{display:flex;gap:6px;font-size:11px;color:var(--soluk)}.asama-ad span{flex:1;text-align:center}
+video{width:100%;border-radius:12px;background:#000;margin-top:10px;max-height:70vh}
+.kopya{background:var(--yuzey2);border-radius:10px;padding:10px;font-size:14px;white-space:pre-wrap;margin-top:6px}
+.secim{border-left:4px solid var(--a);padding:6px 10px;margin:8px 0;background:var(--yuzey2);border-radius:0 10px 10px 0;font-size:15px}
+.secim.b{border-color:var(--b)}
+.bolum{border-top:1px solid var(--cizgi);padding-top:10px;margin-top:10px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#0c0e12ee;backdrop-filter:blur(8px);border-top:1px solid var(--cizgi);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;margin:0;border-radius:0;background:none;color:var(--soluk);padding:10px 4px 12px;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:24px;height:24px}
+nav button.aktif{color:var(--vurgu)}
+.rozet{background:var(--kotu);color:#fff;border-radius:99px;font-size:11px;padding:0 6px;margin-left:4px}
+.gizli{display:none}
+.uyari{background:#3a2a10;border:1px solid #6b4d16;color:#ffd98a;border-radius:12px;padding:12px;font-size:14px;margin-bottom:12px}
+.hata{color:#ff9b9b;font-size:14px;margin-top:8px;white-space:pre-wrap}
+a{color:var(--vurgu)}
+.bos{text-align:center;color:var(--soluk);padding:30px 10px}
+</style>
+</head>
+<body>
+
+<div class="ust"><img src="icon-192.png" alt=""><div><h1>Dizi Stüdyo</h1></div></div>
+<p class="alt-baslik" id="altBaslik">Fikir seç, bölüm üret, A/B ile devam et.</p>
+
+<div id="ayarUyari" class="uyari gizli">Önce <b>Ayarlar</b> sekmesinden GitHub anahtarını gir.</div>
+
+<!-- ============ YENİ ============ -->
+<section id="s-yeni">
+  <div class="kart">
+    <h3>Yeni dizi fikri</h3>
+    <label for="istek">Ne tür bir dizi istiyorsun?</label>
+    <textarea id="istek" placeholder="Örn: Zengin bir ailenin hizmetçisi aslında kayıp mirasçı çıkıyor..."></textarea>
+    <div class="cipler" id="ornekler"></div>
+    <button class="ana" id="fikirBtn">5 fikir üret</button>
+    <p class="soluk">Fikirler 1-2 dakikada gelir. Sonra birini seçersin, 1. bölüm yazılıp video üretilir.</p>
+  </div>
+  <div id="fikirAlani"></div>
+</section>
+
+<!-- ============ DİZİLER ============ -->
+<section id="s-diziler" class="gizli">
+  <div class="ikili"><button id="dizilerYenile" class="kucuk">↻ Yenile</button></div>
+  <div id="diziListe"><div class="bos">Yükleniyor...</div></div>
+</section>
+
+<!-- ============ İŞLER ============ -->
+<section id="s-isler" class="gizli">
+  <div id="isListe"></div>
+</section>
+
+<!-- ============ AYARLAR ============ -->
+<section id="s-ayarlar" class="gizli">
+  <div class="kart">
+    <h3>GitHub bağlantısı</h3>
+    <label for="token">GitHub erişim anahtarı (token)</label>
+    <input id="token" type="password" autocomplete="off" placeholder="github_pat_...">
+    <label for="repo">Depo</label>
+    <input id="repo" autocomplete="off">
+    <label for="kalite">Video kalitesi</label>
+    <select id="kalite">
+      <option value="tam">Tam kalite (önerilen, ~15-25 dk)</option>
+      <option value="hizli">Hızlı taslak (~10-15 dk)</option>
+    </select>
+    <button class="ana" id="kaydetBtn">Kaydet ve bağlantıyı dene</button>
+    <div id="ayarSonuc" class="soluk"></div>
+  </div>
+  <div class="kart soluk">
+    Anahtar sadece bu telefonda saklanır. Videolar GitHub sunucusunda üretilir, fikir/senaryo/ses için Gemini'nin ücretsiz kotası kullanılır.
+  </div>
+</section>
+
+<nav>
+  <button data-s="yeni" class="aktif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Yeni</button>
+  <button data-s="diziler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg>Diziler</button>
+  <button data-s="isler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>İşler<span id="isRozet" class="rozet gizli"></span></span></button>
+  <button data-s="ayarlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ayarlar</button>
+</nav>
+
+<script>
+"use strict";
+// ---------------------------------------------------------------- depolama (hata vermeden)
+const kayit = {
+  al(k, v) { try { const x = localStorage.getItem(k); return x === null ? v : JSON.parse(x); } catch (e) { return v; } },
+  koy(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const VARSAYILAN_REPO = "ceyhunakca9-prog/shorts-otomasyon";
+const ayar = () => ({ token: kayit.al("token", ""), repo: kayit.al("repo", VARSAYILAN_REPO), kalite: kayit.al("kalite", "tam") });
+let isler = kayit.al("isler", []);          // [{id, tur, baslik, zaman, ...}]
+const islerKaydet = () => kayit.koy("isler", isler);
+
+const $ = s => document.querySelector(s);
+const el = (etiket, ozel = {}, ...cocuk) => {
+  const e = document.createElement(etiket);
+  for (const [k, v] of Object.entries(ozel)) {
+    if (k === "class") e.className = v; else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (k === "html") e.innerHTML = v; else e.setAttribute(k, v);
+  }
+  for (const c of cocuk.flat()) if (c != null) e.append(c.nodeType ? c : document.createTextNode(c));
+  return e;
+};
+
+// ---------------------------------------------------------------- GitHub API
+async function gh(yol, sec = {}) {
+  const { token } = ayar();
+  const r = await fetch("https://api.github.com" + yol, {
+    cache: "no-store", ...sec,
+    headers: { "Accept": "application/vnd.github+json", "Authorization": "Bearer " + token,
+               "X-GitHub-Api-Version": "2022-11-28", ...(sec.headers || {}) }
+  });
+  if (r.status === 404) return null;
+  if (!r.ok) {
+    let m = ""; try { m = (await r.json()).message; } catch (e) {}
+    throw new Error(r.status === 401 ? "Anahtar geçersiz (401). Ayarlar'dan yeni anahtar gir."
+      : r.status === 403 ? "Yetki yok (403): " + m : `GitHub hatası ${r.status}: ${m}`);
+  }
+  return r.status === 204 ? true : r.json();
+}
+function b64metin(b64) {
+  const ham = atob(b64.replace(/\n/g, ""));
+  return new TextDecoder().decode(Uint8Array.from(ham, ch => ch.charCodeAt(0)));
+}
+async function dosyaOku(yol) {
+  const c = await gh(`/repos/${ayar().repo}/contents/${encodeURIComponent(yol).replace(/%2F/g, "/")}?ref=main&_=${Date.now()}`);
+  if (!c) return null;
+  if (c.content) return JSON.parse(b64metin(c.content));
+  if (c.sha) {                                          // 1 MB üstü dosyalar
+    const b = await gh(`/repos/${ayar().repo}/git/blobs/${c.sha}`);
+    return JSON.parse(b64metin(b.content));
+  }
+  return null;
+}
+async function tetikle(girdiler) {
+  return gh(`/repos/${ayar().repo}/actions/workflows/uygulama.yml/dispatches`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ref: "main", inputs: girdiler })
+  });
+}
+const yeniId = () => "u" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+
+// ---------------------------------------------------------------- sekmeler
+function sekme(ad) {
+  for (const s of ["yeni", "diziler", "isler", "ayarlar"]) $("#s-" + s).classList.toggle("gizli", s !== ad);
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("aktif", b.dataset.s === ad));
+  if (ad === "diziler") dizileriGoster();
+  if (ad === "isler") isleriCiz();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => sekme(b.dataset.s));
+
+function ayarKontrol() {
+  const yok = !ayar().token;
+  $("#ayarUyari").classList.toggle("gizli", !yok);
+  return !yok;
+}
+
+// ---------------------------------------------------------------- iş başlatma
+async function isBaslat(tur, girdiler, baslik) {
+  if (!ayarKontrol()) { sekme("ayarlar"); return null; }
+  const id = yeniId();
+  try {
+    await tetikle({ islem: tur, id, mod: ayar().kalite, ...girdiler });
+  } catch (e) { alert("Başlatılamadı: " + e.message); return null; }
+  const is = { id, tur, baslik, zaman: Date.now(), durum: "basladi" };
+  isler.unshift(is); isler = isler.slice(0, 40); islerKaydet();
+  rozetGuncelle();
+  return is;
+}
+
+// ---------------------------------------------------------------- YENİ: fikir
+const ORNEKLER = ["Hizmetçi aslında mirasçı", "Kumpasla batırılan patronun intikamı", "Fakir damat zengin aileye karşı",
+                  "Kayıp ikiz kardeş", "Bir gecede milyoner olan garson"];
+const ornekKutu = $("#ornekler");
+ORNEKLER.forEach(o => ornekKutu.append(el("button", { class: "cip", onclick: () => { $("#istek").value = o; } }, o)));
+
+$("#fikirBtn").onclick = async () => {
+  const b = $("#fikirBtn"); b.disabled = true;
+  const is = await isBaslat("fikir", { istek: $("#istek").value.trim() }, "Fikirler: " + ($("#istek").value.trim() || "serbest"));
+  b.disabled = false;
+  if (is) { kayit.koy("sonFikir", is.id); fikirAlaniCiz(); }
+};
+
+async function fikirAlaniCiz() {
+  const alan = $("#fikirAlani"); const id = kayit.al("sonFikir", null);
+  if (!id) { alan.innerHTML = ""; return; }
+  const is = isler.find(i => i.id === id);
+  if (!is) { alan.innerHTML = ""; return; }
+  const d = is.veri;
+  alan.innerHTML = "";
+  if (!d || d.durum !== "bitti") {
+    alan.append(isKarti(is)); return;
+  }
+  alan.append(el("h2", {}, "Fikirler — birini seç"));
+  d.fikirler.forEach((f, i) => {
+    alan.append(el("div", { class: "kart" },
+      el("h3", {}, f.baslik), el("span", { class: "etiket" }, f.tur || "Dizi"),
+      el("p", {}, f.ozet || ""),
+      f.ilk_bolum ? el("p", { class: "soluk" }, "1. bölüm: " + f.ilk_bolum) : null,
+      f.neden_tutar ? el("p", { class: "soluk" }, "Neden tutar: " + f.neden_tutar) : null,
+      el("button", { class: "ana", onclick: async (ev) => {
+        ev.target.disabled = true;
+        const yeni = await isBaslat("yaz", { fikir: JSON.stringify(f) }, `${f.baslik} — 1. bölüm`);
+        if (yeni) sekme("isler"); else ev.target.disabled = false;
+      } }, "Bu fikirle 1. bölümü üret")));
+  });
+  alan.append(el("button", { onclick: () => { kayit.koy("sonFikir", null); fikirAlaniCiz(); } }, "Fikirleri temizle"));
+}
+
+// ---------------------------------------------------------------- iş durumu
+const ASAMALAR = [["senaryo", "Senaryo"], ["ses", "Sesler"], ["goruntu", "Görüntü"], ["bitti", "Hazır"]];
+function sureYazi(ms) { const d = Math.floor(ms / 60000); return d < 1 ? "az önce" : (d < 60 ? d + " dk" : Math.floor(d / 60) + " sa " + (d % 60) + " dk") + " önce"; }
+
+function isKarti(is) {
+  const d = is.veri || {};
+  const bitti = d.durum === "bitti", hata = d.durum === "hata" || is.calisma === "failure" || is.calisma === "cancelled";
+  let mesaj = d.mesaj || (is.calisma === "queued" ? "Sırada bekliyor..." : "Sunucu çalışıyor...");
+  if (!d.durum && is.calisma === "failure") mesaj = "Sunucuda hata oldu.";
+  if (!d.durum && is.calisma === "cancelled") mesaj = "İptal edildi.";
+  const kart = el("div", { class: "kart" },
+    el("h3", {}, is.baslik || is.tur),
+    el("div", { class: "durum" }, el("span", { class: "nokta" + (bitti ? " iyi" : hata ? " kotu" : "") }),
+       el("span", {}, mesaj)),
+    el("div", { class: "soluk" }, "Başladı: " + sureYazi(Date.now() - is.zaman)));
+  if (is.tur !== "fikir") {
+    const sira = ASAMALAR.findIndex(a => a[0] === (d.asama || "senaryo"));
+    const cubuk = el("div", { class: "asamalar" }), adlar = el("div", { class: "asama-ad" });
+    ASAMALAR.forEach((a, i) => {
+      const sinif = bitti || i < sira ? "bitti" : i === sira && !hata ? "su" : "";
+      cubuk.append(el("div", { class: "asama " + sinif })); adlar.append(el("span", {}, a[1]));
+    });
+    if (is.tur === "video") cubuk.firstChild.className = "asama bitti";
+    kart.append(cubuk, adlar);
+  }
+  if (bitti && is.tur === "fikir") kart.append(el("button", { class: "ana", onclick: () => { kayit.koy("sonFikir", is.id); sekme("yeni"); fikirAlaniCiz(); } }, "Fikirleri gör"));
+  if (bitti && d.video) kart.append(el("button", { class: "ana", onclick: () => videoAc(d.hikaye, d.video, kart) }, "▶ Videoyu izle / indir"));
+  if (hata && is.calismaUrl) kart.append(el("a", { href: is.calismaUrl, target: "_blank" }, "Sunucu kaydını aç"));
+  if (hata && d.mesaj) kart.append(el("div", { class: "hata" }, d.mesaj));
+  kart.append(el("button", { class: "kucuk", onclick: () => { isler = isler.filter(x => x.id !== is.id); islerKaydet(); isleriCiz(); rozetGuncelle(); } }, "Listeden kaldır"));
+  return kart;
+}
+
+function isleriCiz() {
+  const l = $("#isListe"); l.innerHTML = "";
+  if (!isler.length) { l.append(el("div", { class: "bos" }, "Henüz iş yok. Yeni sekmesinden fikir üret.")); return; }
+  isler.forEach(is => l.append(isKarti(is)));
+}
+function rozetGuncelle() {
+  const n = isler.filter(i => !i.son).length; const r = $("#isRozet");
+  r.textContent = n; r.classList.toggle("gizli", !n);
+}
+
+let calismalarOnbellek = { zaman: 0, liste: [] };
+async function calismalar() {
+  if (Date.now() - calismalarOnbellek.zaman < 15000) return calismalarOnbellek.liste;
+  const r = await gh(`/repos/${ayar().repo}/actions/workflows/uygulama.yml/runs?per_page=30`);
+  calismalarOnbellek = { zaman: Date.now(), liste: (r && r.workflow_runs) || [] };
+  return calismalarOnbellek.liste;
+}
+
+let yoklamaSuruyor = false;
+async function yokla() {
+  if (yoklamaSuruyor || !ayar().token) return;
+  const acik = isler.filter(i => !i.son);
+  if (!acik.length) return;
+  yoklamaSuruyor = true;
+  try {
+    const runs = await calismalar().catch(() => []);
+    for (const is of acik) {
+      const run = runs.find(r => (r.display_title || "").includes(is.id));
+      if (run) { is.calisma = run.status === "completed" ? run.conclusion : run.status; is.calismaUrl = run.html_url; }
+      try { const d = await dosyaOku(`uygulama_veri/${is.id}.json`); if (d) is.veri = d; } catch (e) {}
+      const d = is.veri || {};
+      if (d.durum === "bitti" || d.durum === "hata" || (run && run.status === "completed" && run.conclusion !== "success")) is.son = true;
+      if (run && run.status === "completed" && run.conclusion === "success" && d.durum === "bitti") is.son = true;
+      if (Date.now() - is.zaman > 3 * 3600 * 1000) is.son = true;
+      if (is.son && d.durum === "bitti") bildir(is);
+    }
+    islerKaydet(); rozetGuncelle();
+    if (!$("#s-isler").classList.contains("gizli")) isleriCiz();
+    if (!$("#s-yeni").classList.contains("gizli")) fikirAlaniCiz();
+  } finally { yoklamaSuruyor = false; }
+}
+function bildir(is) {
+  if (is.bildirildi) return; is.bildirildi = true;
+  try { if (navigator.vibrate) navigator.vibrate([120, 60, 120]); } catch (e) {}
+  try {
+    if ("Notification" in window && Notification.permission === "granted")
+      new Notification("Dizi Stüdyo", { body: (is.baslik || "İş") + " hazır!", icon: "icon-192.png" });
+  } catch (e) {}
+}
+setInterval(yokla, 10000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { calismalarOnbellek.zaman = 0; yokla(); } });
+
+// ---------------------------------------------------------------- video
+async function videoAc(hikaye, etiket, kap) {
+  const alan = el("div", {}, el("p", { class: "soluk" }, "Video yükleniyor..."));
+  kap.append(alan);
+  try {
+    const rel = await gh(`/repos/${ayar().repo}/releases/tags/${encodeURIComponent(etiket)}`);
+    if (!rel) throw new Error("Video bulunamadı");
+    const mp4 = rel.assets.find(a => a.name.endsWith(".mp4"));
+    alan.innerHTML = "";
+    let basarili = false;
+    if (mp4) {
+      try {
+        const r = await fetch(mp4.url, { headers: { "Accept": "application/octet-stream", "Authorization": "Bearer " + ayar().token } });
+        if (!r.ok) throw new Error(r.status);
+        const blob = await r.blob();
+        const url = URL.createObjectURL(blob);
+        alan.append(el("video", { src: url, controls: "", playsinline: "" }),
+                    el("a", { href: url, download: mp4.name }, el("button", { class: "ana" }, "⬇ Telefona indir")));
+        basarili = true;
+      } catch (e) { /* tarayıcı doğrudan indirmeye izin vermediyse GitHub sayfasına yönlendir */ }
+    }
+    if (!basarili) alan.append(el("a", { href: rel.html_url, target: "_blank" }, el("button", { class: "ana" }, "GitHub'da aç ve indir")));
+    // YouTube metinleri
+    const v = await dosyaOku(`hikayeler/${hikaye}.json`).catch(() => null);
+    if (v) {
+      const kopyaKutu = (ad, metin) => el("div", {}, el("label", {}, ad),
+        el("div", { class: "kopya" }, metin),
+        el("button", { class: "kucuk", onclick: (ev) => { navigator.clipboard && navigator.clipboard.writeText(metin); ev.target.textContent = "Kopyalandı ✓"; } }, "Kopyala"));
+      alan.append(kopyaKutu("YouTube başlığı", v.youtube_baslik || v.baslik || ""),
+                  kopyaKutu("Açıklama", v.youtube_aciklama || ""),
+                  kopyaKutu("Etiketler", (v.etiketler || []).join(", ")));
+    }
+  } catch (e) { alan.innerHTML = ""; alan.append(el("div", { class: "hata" }, e.message)); }
+}
+
+// ---------------------------------------------------------------- DİZİLER
+async function dizileriGoster() {
+  const l = $("#diziListe");
+  if (!ayarKontrol()) { l.innerHTML = ""; return; }
+  l.innerHTML = '<div class="bos">Yükleniyor...</div>';
+  let ind;
+  try { ind = await dosyaOku("uygulama_veri/diziler.json"); }
+  catch (e) { l.innerHTML = ""; l.append(el("div", { class: "hata" }, e.message)); return; }
+  l.innerHTML = "";
+  const diziler = Object.entries((ind && ind.diziler) || {});
+  if (!diziler.length) { l.append(el("div", { class: "bos" }, "Henüz dizi yok.")); return; }
+  diziler.sort((a, b) => (b[1].son_guncelleme || "").localeCompare(a[1].son_guncelleme || ""));
+  for (const [diziId, d] of diziler) {
+    const kart = el("div", { class: "kart" }, el("h3", {}, d.dizi), el("span", { class: "etiket" }, d.bolumler.length + " bölüm"));
+    const son = d.bolumler[d.bolumler.length - 1];
+    for (const b of d.bolumler) {
+      const bk = el("div", { class: "bolum" }, el("b", {}, b.bolum + ". bölüm"),
+        b.ozet ? el("p", { class: "soluk" }, b.ozet) : null);
+      if (b.video) bk.append(el("button", { class: "kucuk", onclick: (ev) => { ev.target.remove(); videoAc(b.dosya, b.video, bk); } }, "▶ Videoyu izle"));
+      else bk.append(el("button", { class: "kucuk", onclick: async (ev) => { ev.target.disabled = true;
+        if (await isBaslat("video", { hikaye: b.dosya }, `${d.dizi} — ${b.bolum}. bölüm videosu`)) sekme("isler"); else ev.target.disabled = false; } }, "🎬 Videoyu üret"));
+      kart.append(bk);
+    }
+    if (son && son.secim) {
+      const s = son.secim;
+      kart.append(el("h2", {}, s.soru || "İzleyiciler ne seçti?"),
+        el("div", { class: "secim" }, el("b", {}, "A: "), s.A || ""),
+        el("div", { class: "secim b" }, el("b", {}, "B: "), s.B || ""),
+        el("p", { class: "soluk" }, "Yorumlarda hangisi çok seçildiyse ona bas; " + (son.bolum + 1) + ". bölüm yazılıp video üretilir."),
+        el("div", { class: "ikili" },
+          ...["A", "B"].map(h => el("button", { class: h.toLowerCase(), onclick: async (ev) => {
+            if (!confirm(`${h} seçeneğiyle ${son.bolum + 1}. bölüm üretilsin mi?`)) return;
+            ev.target.disabled = true;
+            if (await isBaslat("devam", { hikaye: son.dosya, secim: h }, `${d.dizi} — ${son.bolum + 1}. bölüm (${h})`)) sekme("isler");
+            else ev.target.disabled = false;
+          } }, h + " kazandı"))));
+    }
+    l.append(kart);
+  }
+}
+$("#dizilerYenile").onclick = dizileriGoster;
+
+// ---------------------------------------------------------------- AYARLAR
+$("#token").value = ayar().token; $("#repo").value = ayar().repo; $("#kalite").value = ayar().kalite;
+$("#kaydetBtn").onclick = async () => {
+  kayit.koy("token", $("#token").value.trim()); kayit.koy("repo", $("#repo").value.trim() || VARSAYILAN_REPO);
+  kayit.koy("kalite", $("#kalite").value);
+  const s = $("#ayarSonuc"); s.textContent = "Deneniyor...";
+  try {
+    const r = await gh(`/repos/${ayar().repo}`);
+    if (!r) throw new Error("Depo bulunamadı. Anahtara bu depoya erişim verildi mi?");
+    await gh(`/repos/${ayar().repo}/actions/workflows/uygulama.yml`);
+    s.textContent = "✓ Bağlantı tamam: " + r.full_name; ayarKontrol();
+    try { if ("Notification" in window && Notification.permission === "default") Notification.requestPermission(); } catch (e) {}
+  } catch (e) { s.textContent = "✗ " + e.message; }
+};
+
+// ---------------------------------------------------------------- başlangıç
+ayarKontrol(); rozetGuncelle(); fikirAlaniCiz(); yokla();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>
