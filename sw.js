@@ -1,5 +1,5 @@
 // Uygulama kabuğunu önbelleğe alır: internet zayıfken de açılır. API istekleri her zaman ağdan gider.
-const SURUM = "dizi-studyo-v1";
+const SURUM = "dizi-studyo-v2";
 const KABUK = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(SURUM).then(c => c.addAll(KABUK))); self.skipWaiting(); });
 self.addEventListener("activate", e => {

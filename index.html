@@ -340,26 +340,32 @@ document.addEventListener("visibilitychange", () => { if (!document.hidden) { ca
 
 // ---------------------------------------------------------------- video
 async function videoAc(hikaye, etiket, kap) {
-  const alan = el("div", {}, el("p", { class: "soluk" }, "Video yükleniyor..."));
+  const alan = el("div", {}, el("p", { class: "soluk" }, "Video yükleniyor... (birkaç saniye sürebilir)"));
   kap.append(alan);
+  let oynadi = false;
   try {
-    const rel = await gh(`/repos/${ayar().repo}/releases/tags/${encodeURIComponent(etiket)}`);
-    if (!rel) throw new Error("Video bulunamadı");
-    const mp4 = rel.assets.find(a => a.name.endsWith(".mp4"));
-    alan.innerHTML = "";
-    let basarili = false;
-    if (mp4) {
-      try {
-        const r = await fetch(mp4.url, { headers: { "Accept": "application/octet-stream", "Authorization": "Bearer " + ayar().token } });
-        if (!r.ok) throw new Error(r.status);
-        const blob = await r.blob();
-        const url = URL.createObjectURL(blob);
-        alan.append(el("video", { src: url, controls: "", playsinline: "" }),
-                    el("a", { href: url, download: mp4.name }, el("button", { class: "ana" }, "⬇ Telefona indir")));
-        basarili = true;
-      } catch (e) { /* tarayıcı doğrudan indirmeye izin vermediyse GitHub sayfasına yönlendir */ }
+    // videolar dalından doğrudan (uygulamanın içinde) oynat
+    const r = await fetch(`https://api.github.com/repos/${ayar().repo}/contents/${encodeURIComponent(etiket)}.mp4?ref=videolar`, {
+      cache: "no-store",
+      headers: { "Accept": "application/vnd.github.raw", "Authorization": "Bearer " + ayar().token, "X-GitHub-Api-Version": "2022-11-28" }
+    });
+    if (r.ok) {
+      const blob = new Blob([await r.arrayBuffer()], { type: "video/mp4" });
+      const url = URL.createObjectURL(blob);
+      alan.innerHTML = "";
+      alan.append(el("video", { src: url, controls: "", playsinline: "", preload: "auto" }),
+                  el("a", { href: url, download: `${hikaye}.mp4` }, el("button", { class: "ana" }, "⬇ Telefona indir")));
+      oynadi = true;
     }
-    if (!basarili) alan.append(el("a", { href: rel.html_url, target: "_blank" }, el("button", { class: "ana" }, "GitHub'da aç ve indir")));
+  } catch (e) { /* aşağıda GitHub bağlantısı gösterilir */ }
+  try {
+    if (!oynadi) {
+      alan.innerHTML = "";
+      const rel = await gh(`/repos/${ayar().repo}/releases/tags/${encodeURIComponent(etiket)}`);
+      if (!rel) throw new Error("Video bulunamadı");
+      alan.append(el("p", { class: "soluk" }, "Bu eski video uygulamada açılamadı:"),
+                  el("a", { href: rel.html_url, target: "_blank" }, el("button", { class: "ana" }, "GitHub'da aç ve indir")));
+    }
     // YouTube metinleri
     const v = await dosyaOku(`hikayeler/${hikaye}.json`).catch(() => null);
     if (v) {
@@ -370,7 +376,7 @@ async function videoAc(hikaye, etiket, kap) {
                   kopyaKutu("Açıklama", v.youtube_aciklama || ""),
                   kopyaKutu("Etiketler", (v.etiketler || []).join(", ")));
     }
-  } catch (e) { alan.innerHTML = ""; alan.append(el("div", { class: "hata" }, e.message)); }
+  } catch (e) { alan.append(el("div", { class: "hata" }, e.message)); }
 }
 
 // ---------------------------------------------------------------- DİZİLER
