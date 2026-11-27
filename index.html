@@ -68,7 +68,7 @@ a{color:var(--vurgu)}
 <body>
 
 <div class="ust"><img src="icon-192.png" alt=""><div><h1>Dizi Stüdyo</h1></div></div>
-<p class="alt-baslik" id="altBaslik">Fikir seç, bölüm üret, A/B ile devam et. <span style="opacity:.5">s.2026-11-26b</span></p>
+<p class="alt-baslik" id="altBaslik">Fikir seç, bölüm üret, A/B ile devam et. <span style="opacity:.5">s.2026-11-27a</span></p>
 
 <div id="ayarUyari" class="uyari gizli">Önce <b>Ayarlar</b> sekmesinden GitHub anahtarını gir.</div>
 
@@ -109,6 +109,11 @@ a{color:var(--vurgu)}
       <option value="tam">Tam kalite (önerilen, ~15-25 dk)</option>
       <option value="hizli">Hızlı taslak (~10-15 dk)</option>
     </select>
+    <label for="sesMotoru">Seslendirme</label>
+    <select id="sesMotoru">
+      <option value="gemini">Gemini (takılırsa OmniVoice yedek) — önerilen</option>
+      <option value="omni">Sadece OmniVoice (kotasız, hızlı)</option>
+    </select>
     <button class="ana" id="kaydetBtn">Kaydet ve bağlantıyı dene</button>
     <div id="ayarSonuc" class="soluk"></div>
   </div>
@@ -132,7 +137,7 @@ const kayit = {
   koy(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 };
 const VARSAYILAN_REPO = "ceyhunakca9-prog/shorts-otomasyon";
-const ayar = () => ({ token: kayit.al("token", ""), repo: kayit.al("repo", VARSAYILAN_REPO), kalite: kayit.al("kalite", "tam") });
+const ayar = () => ({ token: kayit.al("token", ""), repo: kayit.al("repo", VARSAYILAN_REPO), kalite: kayit.al("kalite", "tam"), ses: kayit.al("ses", "gemini") });
 let isler = kayit.al("isler", []);          // [{id, tur, baslik, zaman, ...}]
 const islerKaydet = () => kayit.koy("isler", isler);
 
@@ -206,7 +211,7 @@ async function isBaslat(tur, girdiler, baslik) {
   if (!ayarKontrol()) { sekme("ayarlar"); return null; }
   const id = yeniId();
   try {
-    await tetikle({ islem: tur, id, mod: ayar().kalite, ...girdiler });
+    await tetikle({ islem: tur, id, mod: ayar().kalite, ses: ayar().ses, ...girdiler });
   } catch (e) { alert("Başlatılamadı: " + e.message); return null; }
   const is = { id, tur, baslik, zaman: Date.now(), durum: "basladi" };
   isler.unshift(is); isler = isler.slice(0, 40); islerKaydet();
@@ -422,10 +427,10 @@ async function dizileriGoster() {
 $("#dizilerYenile").onclick = dizileriGoster;
 
 // ---------------------------------------------------------------- AYARLAR
-$("#token").value = ayar().token; $("#repo").value = ayar().repo; $("#kalite").value = ayar().kalite;
+$("#token").value = ayar().token; $("#repo").value = ayar().repo; $("#kalite").value = ayar().kalite; $("#sesMotoru").value = ayar().ses;
 $("#kaydetBtn").onclick = async () => {
   kayit.koy("token", $("#token").value.trim()); kayit.koy("repo", $("#repo").value.trim() || VARSAYILAN_REPO);
-  kayit.koy("kalite", $("#kalite").value);
+  kayit.koy("kalite", $("#kalite").value); kayit.koy("ses", $("#sesMotoru").value);
   const s = $("#ayarSonuc"); s.textContent = "Deneniyor...";
   try {
     const r = await gh(`/repos/${ayar().repo}`);
@@ -437,7 +442,7 @@ $("#kaydetBtn").onclick = async () => {
 };
 
 // ---------------------------------------------------------------- otomatik güncelleme
-const SURUM = "2026-11-26b";
+const SURUM = "2026-11-27a";
 async function guncellemeKontrol() {
   try {
     const r = await fetch("surum.txt?_=" + Date.now(), { cache: "no-store" });
